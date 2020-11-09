@@ -13,7 +13,7 @@
 # limitations under the License.
 
 homepage: "https://eulerian.io"
-documentation: "https://eulerian.io/gtm-template-documentation"
+documentation: "https://github.com/EulerianTechnologies/gtm-template-eulerian-io#readme"
 versions:
   - sha: cb9beec8217c9d029dcd0d857266720c9d27344c
     changeNotes: add TOS
