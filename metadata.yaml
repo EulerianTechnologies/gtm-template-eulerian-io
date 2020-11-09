@@ -15,5 +15,7 @@
 homepage: "https://eulerian.io"
 documentation: "https://eulerian.io/gtm-template-documentation"
 versions:
+  - sha: cb9beec8217c9d029dcd0d857266720c9d27344c
+    changeNotes: add TOS
   - sha: 0f39e203b8e06dad5ea2a94dff056ef3b67fb512
     changeNotes: Initial Version
