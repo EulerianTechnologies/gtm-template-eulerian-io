@@ -44,5 +44,5 @@ By default, the platform is automatically generating a new transaction ID.
 Measure and attribute your transactions' generated revenue. 
 By default, each transaction has fixed value amount of 1.
 
-#### Transaction Amount Currency
+### Transaction Amount Currency
 Set this option to automatically convert transactions happening in different currencies to your Eulerian.io's main currency. Specify the currency code you need to use (either a specific string or a custom variable)
