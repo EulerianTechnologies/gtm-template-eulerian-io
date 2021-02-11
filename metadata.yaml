@@ -15,8 +15,10 @@
 homepage: "https://eulerian.io"
 documentation: "https://github.com/EulerianTechnologies/gtm-template-eulerian-io#readme"
 versions:
+  - sha: aa4615deaa59a873fa671002c9069c00f2441099
+    changeNotes: implement enopagedt
   - sha: 87edd2ce3f940138b04f08b39377b2e44bd37428
-    changeNodes: fix language
+    changeNotes: fix language
   - sha: cb9beec8217c9d029dcd0d857266720c9d27344c
     changeNotes: add TOS
   - sha: 0f39e203b8e06dad5ea2a94dff056ef3b67fb512
