@@ -15,6 +15,8 @@
 homepage: "https://eulerian.io"
 documentation: "https://github.com/EulerianTechnologies/gtm-template-eulerian-io#readme"
 versions:
+  - sha: b579b25eb671b0cf85c46d98c0b1c06aae743d38
+    changeNotes: adding support for regex on domain
   - sha: aa4615deaa59a873fa671002c9069c00f2441099
     changeNotes: implement enopagedt
   - sha: 87edd2ce3f940138b04f08b39377b2e44bd37428
