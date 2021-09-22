@@ -98,7 +98,7 @@ ___TEMPLATE_PARAMETERS___
               {
                 "type": "REGEX",
                 "args": [
-                  "(https?://)?[a-zA-Z0-9-]*\\.[a-zA-Z0-9-]*\\.[a-zA-Z0-9]{1,4}"
+                  "(https?://)?([a-zA-Z0-9-]*\\.){1,2}[a-zA-Z0-9-]*\\.[a-zA-Z0-9]{1,4}"
                 ],
                 "errorMessage": "The expected format is \"my.domain.com\"",
                 "enablingConditions": []
@@ -516,6 +516,6 @@ setup: ''
 
 ___NOTES___
 
-Created on 10/02/2021 à 18:24:27
+Created on 22/09/2021, 08:44:26
 
 
