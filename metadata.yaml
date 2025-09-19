@@ -15,8 +15,10 @@
 homepage: "https://eulerian.io"
 documentation: "https://github.com/EulerianTechnologies/gtm-template-eulerian-io#readme"
 versions:
+  - sha: b36df697388e86624afc0aff77aa55546dcfffab
+    changeNotes: revamped version for simplified setup
   - sha: 09d80d2d9484c70745132d506a32267b998b5dde
-    changeNotes: DEPRECATED - use Eulerian Analytics plugin ONLY
+    changeNotes: not applicable anymore
   - sha: b579b25eb671b0cf85c46d98c0b1c06aae743d38
     changeNotes: adding support for regex on domain
   - sha: aa4615deaa59a873fa671002c9069c00f2441099
