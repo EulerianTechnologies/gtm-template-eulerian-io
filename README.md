@@ -25,18 +25,10 @@ If you don't already have an account, you can try our freemium platform through 
    5.2 example : if you tracking domain is : `https://io1.eulerian.net` the **trackingDomain** is **io1.eulerian.net**
 
    5.3 example : if you tracking domain is : `https://sdf475.eulerian.io` the **trackingDomain** is **sdf475.eulerian.io**
-   
-6. set the consent mode configuration, one of the three options :
-   
-   6.1 Consent is handled before us being called -> set the enoepm=1 parameter
-   
-   6.2 Consent through pmcat by providing the list of consented categories for the current call
-   
-   6.3 Consent through TCF, in this case the TCString needs to be provided through a custom variable.
-   
-7. save the template
-8. trigger the template with custom page_view / remove_from_cart / add_to_cart / view_item / purchase / generate_lead.
-9. publish the modifications -> you are now **live** !
+
+6. save the template
+7. trigger the template with custom page_view / remove_from_cart / add_to_cart / view_item / purchase / generate_lead.
+8. publish the modifications -> you are now **live** !
 
 ### Which events are mapped
 
