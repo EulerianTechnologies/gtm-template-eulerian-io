@@ -1,48 +1,101 @@
 
-
-# Eulerian IO Tracking
+# Eulerian Marketing Platform for Google Tag Manager (GTM) Client-Side
 
 ## Description
 
-This Google Tag Manager Community template is available for the Eulerian.IO attribution service provided by Eulerian Technologies SAS (https://eulerian.com)
+This Google Tag Manager Community template is available for the Eulerian Marketing Platform provided by Eulerian Technologies SAS (https://eulerian.com)
 
-## Getting Started
+The **dataLayer** used is the one described in the official documentation of the [Google Tag Manager Solution](https://developers.google.com/tag-platform/tag-manager/datalayer)
 
-* Register for free at https://eulerian.io
-* Create a new subdomain on your DNS Provider following our instructions (recommended)
-* The Eulerian IO tag template allow you to install up to 3 different tags:
+For server-side integration please check the appropriate [GTM Server-Side plugin](https://github.com/EulerianTechnologies/gtm-ss-eulerian-analytics)
 
-### Page view
-This call is trigered during web page loading or following specific actions. Use this tag to measure metrics associated to visitor's navigation on your website like : number of visits, bounce rate, time spent on site...
 
-You might want to exclude pages which should not be tracked when using the All Pages trigger (product pages and transaction confirmation page).
+### Documentation
 
-### Product page View
-Flags to Eulerian that a product has been seen.
+If you don't already have an account, you can try our freemium platform through [Eulerian.IO](https://www.eulerian.io) to create a free account & declare your website, this allow you to have access to the trackingDomain.
 
-You can exclude the page view tag triggering on your product pages in order to avoid counting twice page views.
+1. go to you google tagmanager instance
+2. go to the "Templates" section
+3. look for the Eulerian Marketing Platform - GTM template in the gallery
+4. create new template
+5. the template is imported you just need to configure with the proper subdomain from the third-party tracking url
 
-### Transaction
-Use this tag to collect and measure transactions happening on your website. This tag has to be triggered from the confirmation page.
+   5.1 example : if you tracking domain is : `https://et1.eulerian.net` the **trackingDomain** is **et1.eulerian.net**
+   
+   5.2 example : if you tracking domain is : `https://io1.eulerian.net` the **trackingDomain** is **io1.eulerian.net**
 
-You can exclude the page view tag triggering on your confirmation page in order to avoid counting twice page views.
+   5.3 example : if you tracking domain is : `https://sdf475.eulerian.io` the **trackingDomain** is **sdf475.eulerian.io**
+   
+6. set the consent mode configuration, one of the three options :
+   
+   6.1 Consent is handled before us being called -> set the enoepm=1 parameter
+   
+   6.2 Consent through pmcat by providing the list of consented categories for the current call
+   
+   6.3 Consent through TCF, in this case the TCString needs to be provided through a custom variable.
+   
+7. save the template
+8. trigger the template with custom page_view / remove_from_cart / add_to_cart / view_item / purchase / generate_lead.
+9. publish the modifications -> you are now **live** !
 
-## Documentation
+### Which events are mapped
 
-### Eulerian Tracking Domain
-Copy-paste your custom subdomain (e.g. 12345.mydomain.com) if you are installing Eulerian IO directly on your web domain.
-If not, select your datacenter region (North America or Europe) to automatically connect to the correct Eulerian Server Domain.
+#### global mapping
 
-### Page Paths and Page Names
-You can set this to a specific string, but it is recommended to either use URL path or custom pagenames when tracking across multiple pages. Set the page path rewriting if you need to clean your website's url structure.
+The following global parameters are always provided to each call sent to us as long as they exists in the original datalayer :
+- **currency** mapped to **currency**
+- **user_id** mapped to **uid**
 
-### Transaction ID
-Use your own transaction ID system on Eulerian when flagging a new order. Be sure that this value is unique otherwise Eulerian won't count it.
-By default, the platform is automatically generating a new transaction ID.
+For each call we auto-copy all additionnal parameters of the event prefixed by **gtm-** for non-standard keys.
 
-### Transaction Amount
-Measure and attribute your transactions' generated revenue. 
-By default, each transaction has fixed value amount of 1.
+#### page_view
 
-### Transaction Amount Currency
-Set this option to automatically convert transactions happening in different currencies to your Eulerian.io's main currency. Specify the currency code you need to use (either a specific string or a custom variable)
+Standard call done
+
+#### purchase
+
+A transaction is registered in this case :
+- **transaction_id** mapped to **ref**
+- **value** mapped to **amount**
+- **items** mapped to product array & product params are prefixed by **ga-**
+  
+#### add_to_cart
+
+Products listed in the **items** array are added to the current cart.
+
+#### remove_from_cart
+
+Products listed in the **items** array are removed from the current cart.
+
+#### view_item
+
+Product page is viewed and the first result of the items array is sent to Eulerian.
+
+#### generate_lead
+
+A lead is registered in this case :
+- **transaction_id** mapped to **ref**, if not available a random ref is created
+- **value** mapped to **amount**
+- **items** mapped to product array & product params are prefixed by **ga-**
+
+#### custom events
+
+Custom events not listed above are directly sent to actions/goals for further processing in the platform.
+
+### MULTI-EVENTS
+
+As GTM can trigger multiple events and hence our tag it can result in multiple calls on our end that can inflate the stats.
+
+To avoid this make sure :
+- you only trigger the Eulerian GTM SS only for the event you want to track
+- avoid multi-event call on a single page : page_view -> view_item -> user_engagement for example only trigger on view_item if exists for example.
+
+
+### SUPPORT
+
+We provide limited support through our free offering, if your setup is more complex we can provide consulting expertise and/or work with your expert agencies of your choice.
+This means that the current plugin works for most cases but not all cases, so please understand your own setup and make sure it makes sense regarding what we are collecting so that you can take the most of our platform. Enjoy !
+
+## License
+
+Apache 2.0
