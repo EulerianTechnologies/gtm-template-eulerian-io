@@ -44,6 +44,12 @@ For each call we auto-copy all additionnal parameters of the event prefixed by *
 
 Standard call done
 
+#### gtm.js
+
+ In case you do not have a **page_view** event, you can check the box in Advanced settings allowing a **gtm.js** event name to be mapped to a page_view event, that way you are still able to trigger calls to Eulerian Marketing Platform.
+ Make sure that you link the event **gtm.js** to the tag to trigger it.
+ If you have a **page_view** event **do not** enable this option as it can cause double-couting.
+
 #### purchase
 
 A transaction is registered in this case :
