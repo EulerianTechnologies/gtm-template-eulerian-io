@@ -85,6 +85,15 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "type": "CHECKBOX",
+            "name": "gtmjs_as_event",
+            "checkboxText": "Consider gtm.js event as page_view",
+            "simpleValueType": true,
+            "enablingConditions": [],
+            "help": "In case you do not have a page_view event available in your dataLayer, you can check this box to consider that the gtm.js event is a page_view.",
+            "alwaysInSummary": true
+          },
+          {
+            "type": "CHECKBOX",
             "name": "debug_mode",
             "checkboxText": "debug mode : Log debug messages in the web console",
             "simpleValueType": true,
@@ -101,6 +110,7 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 const logToConsole = require('logToConsole');
 const log = data.debug_mode ? logToConsole : (() => {});
+const gtmjs_as_pageview = data.gtmjs_as_pageview ? true : false;
 
 const injectScript = require('injectScript');
 const queryPermission = require('queryPermission');
@@ -242,6 +252,16 @@ let amount = ecommData.value || 1;
 let prds = items2product(ecommData.items || []);
 
 switch ( event_name ) {
+	case "gtm.js":
+		if ( gtmjs_as_pageview ) {
+			augmentPayload(payload, eventData);
+		} else {
+			// otherwise treat as strandard dimension
+			payload.push('enopagedt', 1);
+			payload.push('action', event_name);
+			augmentPayload(payload, eventData);
+		}
+		break;
 	case "page_view":
 		augmentPayload(payload, eventData);
 		break;
