@@ -15,6 +15,8 @@
 homepage: "https://eulerian.io"
 documentation: "https://github.com/EulerianTechnologies/gtm-template-eulerian-io#readme"
 versions:
+  - sha: c221ed378b2a290e47808a25e0338fb1a28672ad
+    changeNotes: handle edge case when dataLayer as no page_view and trigger on gtm.js event name
   - sha: b36df697388e86624afc0aff77aa55546dcfffab
     changeNotes: revamped version for simplified setup
   - sha: 09d80d2d9484c70745132d506a32267b998b5dde
