@@ -85,7 +85,7 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "type": "CHECKBOX",
-            "name": "gtmjs_as_event",
+            "name": "gtmjs_as_pageview",
             "checkboxText": "Consider gtm.js event as page_view",
             "simpleValueType": true,
             "enablingConditions": [],
@@ -236,7 +236,7 @@ const eventData = mergePreviousData(datalayer);
 const ecommData = eventData.ecommerce || {};
 
 log('[Eulerian Tag ID ',data.gtmTagId,'] Debug mode Activated');
-log('[Eulerian Tag ID ',data.gtmTagId,'] Configuration Data Provided via this tag:', data);
+log('[Eulerian Tag ID ',data.gtmTagId,'] Configuration Data Provided via this tag:', data, ' - event_name=', event_name);
 log('[Eulerian Tag ID ',data.gtmTagId,'] Payload from DataLayer : ', eventData);
 
 let payload = [
