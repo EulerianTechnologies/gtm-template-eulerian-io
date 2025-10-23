@@ -10,9 +10,11 @@ ___INFO___
 
 {
   "type": "TAG",
-  "id": "cvt_temp_public_id",
-  "version": 1,
-  "securityGroups": [],
+  "id": "ela",
+  "version": 2.0,
+  "securityGroups": [
+	"NON_GOOGLE_SCRIPTS"
+  ],
   "displayName": "Eulerian Marketing Platform",
   "categories": [
     "REMARKETING",
