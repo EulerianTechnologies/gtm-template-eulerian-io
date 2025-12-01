@@ -42,7 +42,10 @@ For each call we auto-copy all additionnal parameters of the event prefixed by *
 
 #### page_view
 
-Standard call done
+Standard call done.
+
+**If** you have page_view events that are linked to another event_name you can provide a list through the **similar_page_view** configuration.
+This configuration entry allows you to list **all** events that **must be** considered as `page_view` events.
 
 #### gtm.js
 
