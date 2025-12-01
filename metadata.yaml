@@ -15,6 +15,8 @@
 homepage: "https://eulerian.io"
 documentation: "https://github.com/EulerianTechnologies/gtm-template-eulerian-io#readme"
 versions:
+  - sha: e9b492b42c4bd344e623286ea8afb72c5bfd53e6
+    changeNotes: added support for similar_page_view events for mapping custom events to standard one
   - sha: e08f0b340086d12d674d44695750ed2d19c83b9a
     changeNotes: id tag ela + securityGroup
   - sha: 65e408a31d0000cf1559a75e8cc180d5dfd9aa74
