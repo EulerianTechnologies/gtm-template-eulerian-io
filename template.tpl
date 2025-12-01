@@ -11,7 +11,7 @@ ___INFO___
 {
   "type": "TAG",
   "id": "ela",
-  "version": 2.0,
+  "version": 1.0,
   "securityGroups": [
 	"NON_GOOGLE_SCRIPTS"
   ],
@@ -95,6 +95,17 @@ ___TEMPLATE_PARAMETERS___
             "alwaysInSummary": true
           },
           {
+    		"type": "TEXT",
+    		"name": "similar_page_view_event",
+    		"displayName": "Similar PageView - Event Names (comma-separated, optional)",
+    		"helpText": "Enter one or more event names, separated by commas (e.g., virtual_page_view,consented_pv,PAGEVIEW). Leave empty if not used. Use this option if the page_view event is not provided as page_view.",
+    		"validation": {
+      			"pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*\\s*(,\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*)*)?\\s*$",
+      			"errorMessage": "Invalid format. Use a comma-separated list of names using letters, numbers, and underscores, starting with a letter or underscore. Leave empty if not used."
+    		},
+			"alwaysInSummary": true
+  		  },
+          {
             "type": "CHECKBOX",
             "name": "debug_mode",
             "checkboxText": "debug mode : Log debug messages in the web console",
@@ -126,7 +137,22 @@ const getTimestampMillis = require('getTimestampMillis');
 const copyFromWindow = require('copyFromWindow');
 const datalayer = copyFromWindow('dataLayer');
 const copyFromDataLayer = require('copyFromDataLayer');
-const event_name = copyFromDataLayer("event") || "page_view";
+let event_name = copyFromDataLayer("event") || "page_view";
+
+// similar events
+const similar_page_view_list = data.similar_page_view_event || "";
+const similarPageView = similar_page_view_list
+  .split(",")
+  .map(e => e.trim())
+  .filter(e => e.length > 0);
+
+// if matches similar page_view => overwrite event_name
+const similarPageViewMatch = similarPageView.some(
+  e => e.toLowerCase() === event_name.toLowerCase()
+);
+if ( similarPageViewMatch ) {
+	event_name = "page_view";
+}
 
 // Get attributes from previous dataLayer.push calls (before the current one with the 'event' set)
 function mergePreviousData(dataLayer) {
