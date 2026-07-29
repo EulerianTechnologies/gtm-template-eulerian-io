@@ -128,8 +128,20 @@ ___TEMPLATE_PARAMETERS___
         "name": "eventNameMappings",
         "simpleTableColumns": [
           {
+            "defaultValue": "EXACT",
+            "displayName": "Match type",
+            "name": "matchType",
+            "type": "SELECT",
+            "selectItems": [
+              { "value": "EXACT",       "displayValue": "Exact match" },
+              { "value": "STARTS_WITH", "displayValue": "Starts with" },
+              { "value": "CONTAINS",    "displayValue": "Contains" },
+              { "value": "ENDS_WITH",   "displayValue": "Ends with" }
+            ]
+          },
+          {
             "defaultValue": "",
-            "displayName": "Event name pattern (JS regex)",
+            "displayName": "Event name value (case-insensitive)",
             "name": "pattern",
             "type": "TEXT",
             "valueValidators": [
@@ -152,7 +164,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "newRowButtonText": "Add a mapping",
-        "help": "Optional. Each row's pattern is a JavaScript regular expression tested against the incoming event_name. The first matching row wins; rules are evaluated top-down. Anchor your pattern with ^ and $ for an exact match (e.g. ^purchase_custom$), or use a prefix pattern (^purchase_.*$) to catch a whole family. The original event_name is always preserved in the 'ga-event_name' parameter sent to Eulerian."
+        "help": "Optional. Compares the incoming event_name (case-insensitive) against the value using the chosen match type: Exact match, Starts with, Contains, or Ends with. The first matching row wins; rules are evaluated top-down. The original event_name is always preserved in the 'ga-event_name' parameter sent to Eulerian."
       }
     ]
   }
@@ -177,8 +189,6 @@ const getTimestampMillis = require('getTimestampMillis');
 const copyFromWindow = require('copyFromWindow');
 const datalayer = copyFromWindow('dataLayer');
 const copyFromDataLayer = require('copyFromDataLayer');
-const createRegex = require('createRegex');
-const testRegex = require('testRegex');
 
 let event_name = copyFromDataLayer("event") || "page_view";
 const original_event_name = event_name;
@@ -198,25 +208,36 @@ if ( similarPageViewMatch ) {
 	event_name = "page_view";
 }
 
-// Advanced event name remapping (regex-based), same mechanism as the server-side template.
+// Advanced event name remapping, same mechanism as the server-side template.
 // The original name is already preserved as `original_event_name` (sent as 'ga-event_name'
 // below), so reporting downstream is unaffected. Rules are evaluated top-down; first match wins.
+function matchEventName(name, matchType, value) {
+	const n = (name || '').toLowerCase();
+	const v = (value || '').toLowerCase();
+	switch ( matchType ) {
+		case 'STARTS_WITH':
+			return n.indexOf(v) === 0;
+		case 'ENDS_WITH':
+			return v.length > 0 && n.length >= v.length && n.indexOf(v, n.length - v.length) === n.length - v.length;
+		case 'CONTAINS':
+			return n.indexOf(v) !== -1;
+		case 'EXACT':
+		default:
+			return n === v;
+	}
+}
+
 const eventNameMappings = data.eventNameMappings || [];
 if ( eventNameMappings && eventNameMappings.length ) {
 	for ( let i = 0; i < eventNameMappings.length; i++ ) {
 		const mapping = eventNameMappings[i] || {};
-		const pattern = (mapping.pattern || '').trim();
+		const matchType = (mapping.matchType || 'EXACT').trim();
+		const value = (mapping.pattern || '').trim();
 		const target = (mapping.standardEvent || '').trim();
-		if ( !pattern || !target ) continue;
+		if ( !value || !target ) continue;
 
-		const rex = createRegex(pattern, '');
-		if ( !rex ) {
-			log('[Eulerian Tag ID ',data.gtmTagId,'] eventNameRemap: invalid regex pattern, skipped:', pattern);
-			continue;
-		}
-
-		if ( testRegex(rex, event_name) ) {
-			log('[Eulerian Tag ID ',data.gtmTagId,'] eventNameRemap: event_name "'+event_name+'" -> "'+target+'" via pattern:', pattern);
+		if ( matchEventName(event_name, matchType, value) ) {
+			log('[Eulerian Tag ID ',data.gtmTagId,'] eventNameRemap: event_name "'+event_name+'" -> "'+target+'" (', matchType, value, ')');
 			event_name = target;
 			break;
 		}
