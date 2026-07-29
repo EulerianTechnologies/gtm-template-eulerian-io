@@ -115,6 +115,46 @@ ___TEMPLATE_PARAMETERS___
         ]
       }
     ]
+  },
+  {
+    "type": "GROUP",
+    "name": "advancedMapping",
+    "displayName": "Advanced event name remapping",
+    "groupStyle": "ZIPPY_OPEN",
+    "subParams": [
+      {
+        "type": "SIMPLE_TABLE",
+        "displayName": "Remap custom event names to standard events",
+        "name": "eventNameMappings",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Event name pattern (JS regex)",
+            "name": "pattern",
+            "type": "TEXT",
+            "valueValidators": [
+              { "type": "NON_EMPTY" }
+            ]
+          },
+          {
+            "defaultValue": "page_view",
+            "displayName": "Treat as",
+            "name": "standardEvent",
+            "type": "SELECT",
+            "selectItems": [
+              { "value": "page_view",        "displayValue": "page_view" },
+              { "value": "view_item",        "displayValue": "view_item" },
+              { "value": "add_to_cart",      "displayValue": "add_to_cart" },
+              { "value": "remove_from_cart", "displayValue": "remove_from_cart" },
+              { "value": "purchase",         "displayValue": "purchase" },
+              { "value": "generate_lead",    "displayValue": "generate_lead" }
+            ]
+          }
+        ],
+        "newRowButtonText": "Add a mapping",
+        "help": "Optional. Each row's pattern is a JavaScript regular expression tested against the incoming event_name. The first matching row wins; rules are evaluated top-down. Anchor your pattern with ^ and $ for an exact match (e.g. ^purchase_custom$), or use a prefix pattern (^purchase_.*$) to catch a whole family. The original event_name is always preserved in the 'ga-event_name' parameter sent to Eulerian."
+      }
+    ]
   }
 ]
 
@@ -137,7 +177,11 @@ const getTimestampMillis = require('getTimestampMillis');
 const copyFromWindow = require('copyFromWindow');
 const datalayer = copyFromWindow('dataLayer');
 const copyFromDataLayer = require('copyFromDataLayer');
+const createRegex = require('createRegex');
+const testRegex = require('testRegex');
+
 let event_name = copyFromDataLayer("event") || "page_view";
+const original_event_name = event_name;
 
 // similar events
 const similar_page_view_list = data.similar_page_view_event || "";
@@ -152,6 +196,31 @@ const similarPageViewMatch = similarPageView.some(
 );
 if ( similarPageViewMatch ) {
 	event_name = "page_view";
+}
+
+// Advanced event name remapping (regex-based), same mechanism as the server-side template.
+// The original name is already preserved as `original_event_name` (sent as 'ga-event_name'
+// below), so reporting downstream is unaffected. Rules are evaluated top-down; first match wins.
+const eventNameMappings = data.eventNameMappings || [];
+if ( eventNameMappings && eventNameMappings.length ) {
+	for ( let i = 0; i < eventNameMappings.length; i++ ) {
+		const mapping = eventNameMappings[i] || {};
+		const pattern = (mapping.pattern || '').trim();
+		const target = (mapping.standardEvent || '').trim();
+		if ( !pattern || !target ) continue;
+
+		const rex = createRegex(pattern, '');
+		if ( !rex ) {
+			log('[Eulerian Tag ID ',data.gtmTagId,'] eventNameRemap: invalid regex pattern, skipped:', pattern);
+			continue;
+		}
+
+		if ( testRegex(rex, event_name) ) {
+			log('[Eulerian Tag ID ',data.gtmTagId,'] eventNameRemap: event_name "'+event_name+'" -> "'+target+'" via pattern:', pattern);
+			event_name = target;
+			break;
+		}
+	}
 }
 
 // Get attributes from previous dataLayer.push calls (before the current one with the 'event' set)
@@ -269,7 +338,9 @@ log('[Eulerian Tag ID ',data.gtmTagId,'] Payload from DataLayer : ', eventData);
 
 let payload = [
 	'ea-gtm-tag',
-	event_name + "_gtm_" + data.gtmTagId + "_" + data.gtmEventId
+	event_name + "_gtm_" + data.gtmTagId + "_" + data.gtmEventId,
+	'ga-event_name',
+	original_event_name
 ];
 
 if ( isDefined(eventData.user_id) ) {
@@ -581,4 +652,3 @@ scenarios: []
 ___NOTES___
 
 Created on 22/09/2021, 08:44:26
-
